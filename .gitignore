@@ -1,0 +1,5 @@
+secrets.yaml
+myenv/*
+_pycache**
+components.yaml
+__pycache__/

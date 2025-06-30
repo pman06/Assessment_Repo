@@ -1,0 +1,72 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: db-ns
+spec:
+  podSelector:
+    matchLabels:
+      app: prod-db
+  policyTypes:
+    - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: app-ns
+spec:
+  podSelector:
+    matchLabels:
+      app: prod-app
+  policyTypes:
+    - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-app-network-policy
+  namespace: db-ns
+spec:
+  podSelector:
+    matchLabels:
+      app: prod-db
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: app-ns
+          podSelector:
+            matchLabels:
+              app: prod-app
+      ports:
+        - protocol: TCP
+          port: 5432
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-nginc-ingress-network-policy
+  namespace: app-ns
+spec:
+  podSelector:
+    matchLabels:
+      app: prod-app
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx # Optional, if labeled
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx # Most common
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 8000

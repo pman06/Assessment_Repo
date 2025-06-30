@@ -1,0 +1,49 @@
+{
+  "id": null,
+  "uid": "fastapi-db-dashboard",
+  "title": "FastAPI & PostgreSQL",
+  "timezone": "browser",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "FastAPI - Response Duration",
+      "targets": [
+        {
+          "expr": "rate(http_request_duration_seconds_sum{job=\"fastapi-app\"}[1m])",
+          "legendFormat": "Response Duration",
+          "interval": ""
+        }
+      ],
+      "datasource": "Prometheus",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 }
+    },
+    {
+      "type": "graph",
+      "title": "FastAPI - Requests Per Second",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total{job=\"fastapi-app\"}[1m])",
+          "legendFormat": "RPS",
+          "interval": ""
+        }
+      ],
+      "datasource": "Prometheus",
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 }
+    },
+    {
+      "type": "graph",
+      "title": "Postgres - Connection Count",
+      "targets": [
+        {
+          "expr": "pg_stat_activity_count",
+          "legendFormat": "Connections",
+          "interval": ""
+        }
+      ],
+      "datasource": "Prometheus",
+      "gridPos": { "x": 0, "y": 8, "w": 24, "h": 8 }
+    }
+  ],
+  "schemaVersion": 36,
+  "version": 1
+}

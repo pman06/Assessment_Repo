@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: prod-db
+  name: prod-db
+  namespace: db-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prod-db
+  template:
+    metadata:
+      labels:
+        app: prod-db
+    spec:
+      serviceAccountName: db-sa
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+        runAsNonRoot: true
+        runAsGroup: 10999
+        runAsUser: 10999
+      containers:
+        - image: postgres:14
+          name: postgres
+          ports:
+            - containerPort: 5432
+              name: postgres
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: db-creds
+                  key: POSTGRES_DB
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-creds
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-creds
+                  key: POSTGRES_USER
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "0.25"
+            limits:
+              memory: "200Mi"
+              cpu: "0.5"
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            privileged: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: pgdata
+              mountPath: /var/lib/postgresql/data
+            - name: tmp
+              mountPath: /tmp
+            - name: run
+              mountPath: /var/run/postgresql
+      volumes:
+        - name: pgdata
+          persistentVolumeClaim:
+            claimName: pgdata-postgres-0
+        - name: tmp
+          emptyDir: {}
+        - name: run
+          emptyDir: {}
