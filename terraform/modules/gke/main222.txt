@@ -1,0 +1,79 @@
+locals {
+
+  zones = slice(data.google_compute_zones.available.names, 0, 1)
+
+  # we will pick the latest k8s version
+  master_version = data.google_container_engine_versions.main.valid_master_versions[0]
+}
+
+data "google_compute_zones" "available" {
+  region = var.region
+  status = "UP"
+}
+
+data "google_container_engine_versions" "main" {
+  location       = var.region
+  version_prefix = "${var.k8s_version}."
+}
+
+resource "google_container_cluster" "gke" {
+  name               = var.cluster_name
+  location           = var.region
+  node_locations     = local.zones
+  min_master_version = local.master_version
+  
+  deletion_protection = false
+  node_config {
+    disk_size_gb = 10
+  }
+
+  # to prevent automatic updates to cluster
+  release_channel {
+    channel = "UNSPECIFIED"
+  }
+  remove_default_node_pool = true
+  initial_node_count       = 1
+
+  network    = var.network
+  subnetwork = var.subnetwork
+
+}
+
+resource "google_container_node_pool" "nodepools" {
+  for_each = var.nodepools
+
+  name       ="${each.value.name}-${each.key}"
+  location   = var.region
+  cluster    = var.cluster_name
+  node_count = each.value.node_count
+
+  autoscaling {
+    min_node_count = "0"
+    max_node_count = "10"
+  }
+
+  management {
+    auto_repair  = true
+    auto_upgrade = false
+  }
+
+  node_config {
+    machine_type = each.value.machine_type
+    labels       = each.value.node_labels
+    disk_size_gb = 10
+
+  }
+
+  lifecycle {
+    ignore_changes = [
+      initial_node_count,
+      node_count,
+      node_config,
+      node_locations
+    ]
+  }
+
+  version    = local.master_version
+  depends_on = [google_container_cluster.gke]
+}
+

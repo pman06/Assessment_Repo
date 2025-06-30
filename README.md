@@ -125,6 +125,19 @@ Use `kubeseal` to generate a sealed version to include in your deployments.
 
 ---
 
+## 🔑 7. To use GKE (cloud based kubernetes)
+
+You access the GKE config files in the terraform folder:
+
+```bash
+cd terraform
+terraform apply
+```
+
+Use `kubeseal` to generate a sealed version to include in your deployments.
+
+---
+
 ## ✅ Next Steps
 
 - Deploy app and database using `kubectl apply -f ./k8s -R`
