@@ -1,4 +1,4 @@
-# 🚀 Kubernetes Local Cluster Deployment Guide
+# 🚀Steps to Deploy Scripts
 
 This guide documents the steps I used to set up a Kubernetes local cluster, configure networking, deploy applications, manage secrets securely, and set up observability using Prometheus.
 
@@ -11,6 +11,8 @@ This guide documents the steps I used to set up a Kubernetes local cluster, conf
 - `kubectl` configured to point to your kind cluster
 - [Helm](https://helm.sh/)
 - `kubeseal` CLI for sealing secrets
+
+-- Build docler image: `docker buildx build -t account/repo ./app/`
 
 ---
 
@@ -124,7 +126,8 @@ Use `kubeseal` to generate a sealed version to include in your deployments.
 
 ## ✅ Next Steps
 
-- Deploy your app and database using `kubectl apply -f ./k8s`
+- Deploy app and database using `kubectl apply -f ./k8s -R`
+- Deploy prometheus, alertmanager and grafana and database using `kubectl apply -f ./monitoring -R`
 - Expose services with Ingress resources
 - Use Grafana dashboards to monitor app and database metrics
 
