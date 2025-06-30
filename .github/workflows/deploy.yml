@@ -7,6 +7,9 @@ on:
   pull_request:
     paths:
       - "app/**"
+env:
+  K8S_FAILED: false
+  
 
 jobs:
   ci:
@@ -119,4 +122,4 @@ jobs:
           version: 'latest'
 
       - name: Run rollback script
-        run: .scriptsck.sh
+        run: ./scripts/rollback.sh
