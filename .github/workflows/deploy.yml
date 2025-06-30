@@ -99,7 +99,7 @@ jobs:
             exit 1
           fi
   approval:
-    if: ${{ env.K8S_FAILED == 'true' }}
+    if: ${{ vars.K8S_FAILED == 'true' }}
     needs: deploy
     runs-on: ubuntu-latest
     environment:
@@ -114,7 +114,7 @@ jobs:
     name: Rollback on Failure (Manual Approval)
     needs: approval
     runs-on: ubuntu-latest
-    if: ${{ env.K8S_FAILED == 'true' }}
+    if: ${{ vars.K8S_FAILED == 'true' }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
