@@ -63,7 +63,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image with tag
-        run: docker build -t pman06/app:${{ env.TAG }} .
+        run: docker build -t pman06/app:${{ env.TAG }} ./app
 
       - name: Push Docker image
         run: docker push pman06/app:${{ env.TAG }}
