@@ -4,13 +4,12 @@ on:
   push:
     paths:
       - "app/**"
-      - .github/workflow
+      - ".github/workflow/*"
   pull_request:
     paths:
       - "app/**"
 env:
-  K8S_FAILED: false
-  
+  K8S_FAILED: "false"
 
 jobs:
   ci:
@@ -43,7 +42,7 @@ jobs:
     name: Build & Push Docker Image
     needs: ci
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' 
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout code
@@ -69,7 +68,7 @@ jobs:
     name: Deploy to Kubernetes
     needs: docker
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' 
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout code
@@ -92,7 +91,7 @@ jobs:
         run: |
           kubectl set image deployment/prod-app production-deployment=pman06/app:${{ env.TAG }} -n app-ns
           kubectl rollout status deployment/prod-app -n app-ns
-          - name: Apply updated Kubernetes manifest
+      - name: Apply updated Kubernetes manifest
         run: |
           kubectl apply -f ./k8s/deployment.yaml
           kubectl rollout status deployment/prod-app -n app-ns || echo "K8S_FAILED=true" >> $GITHUB_ENV
@@ -120,7 +119,7 @@ jobs:
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: 'latest'
+          version: "latest"
 
       - name: Run rollback script
         run: ./scripts/rollback.sh
