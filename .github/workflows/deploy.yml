@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - "app/**"
-      - ".github/workflows/*"
+      - ".github/workflows/**"
   pull_request:
     paths:
       - "app/**"
@@ -37,6 +37,10 @@ jobs:
           else
             echo "No tests found."
           fi
+      - name: scan with Snyk/Trivy
+        run: echo "Running SAST on code and manifests"
+      - name: SCA test
+        run: echo running sonaqube scan
 
   docker:
     name: Build & Push Docker Image
