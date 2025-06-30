@@ -12,7 +12,8 @@ This guide documents the steps I used to set up a Kubernetes local cluster, conf
 - [Helm](https://helm.sh/)
 - `kubeseal` CLI for sealing secrets
 
--- Build docler image: `docker buildx build -t account/repo ./app/`
+- Build docler image: `docker buildx build -t account/repo ./app/`
+- create kind cluster `kind create cluster --config kind-config.yaml`
 
 ---
 
